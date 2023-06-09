@@ -22,7 +22,7 @@ jobs:
       
       - run: echo $(gcloud config get-value project)
       
-      - run: echo $(gcloud projects list-permissions dlp-dataflow-deid-test)
+      - run: echo $(gcloud projects get-iam-policy dlp-dataflow-deid-test)
       
       - run: echo $(gcloud iam service-accounts list)
       

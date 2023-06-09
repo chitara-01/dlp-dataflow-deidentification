@@ -5,6 +5,8 @@ on:
     branches:
       - ci_workflow
 
+permissions: write-all
+
 jobs:
   build:
     runs-on: 

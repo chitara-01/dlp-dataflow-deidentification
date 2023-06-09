@@ -22,4 +22,8 @@ jobs:
       
       - run: echo $(gcloud config get-value project)
       
+      - run: echo $(gcloud projects list-permissions dlp-dataflow-deid-test)
+      
+      - run: echo $(gcloud iam service-accounts list)
+      
       - run: gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" --region=us-central1 --project=dlp-dataflow-deid-test --streaming --enableStreamingEngine --tempLocation=gs://dlp-dataflow-deid-test-demo-data/temp --numWorkers=2 --maxNumWorkers=3 --runner=DataflowRunner --filePattern=gs://dlp-dataflow-deid-test-demo-data/*.csv --dataset=demo_dataset  --inspectTemplateName=projects/dlp-dataflow-deid-test/locations/global/inspectTemplates/dlp-demo-inspect-latest-1686302920427 --deidentifyTemplateName=projects/dlp-dataflow-deid-test/locations/global/deidentifyTemplates/dlp-demo-deid-latest-1686302920427 --DLPMethod=DEID"

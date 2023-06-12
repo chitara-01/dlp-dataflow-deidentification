@@ -35,6 +35,13 @@ jobs:
       - gh-test-2
 
     steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
       - name: Query BQ
         run: bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2`'
       

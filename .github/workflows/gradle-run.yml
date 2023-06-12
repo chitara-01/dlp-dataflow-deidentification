@@ -11,14 +11,18 @@ jobs:
   build:
     runs-on: 
       - self-hosted
-      - gh-test-1
+      - gh-test-2
 
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-java@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
         with:
           java-version: 11
+      
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
       
       - run: echo $(gcloud config get-value project)
       
@@ -26,4 +30,5 @@ jobs:
       
       - run: echo $(gcloud iam service-accounts list)
       
-      - run: gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" --region=us-central1 --project=dlp-dataflow-deid-test --streaming --enableStreamingEngine --tempLocation=gs://dlp-dataflow-deid-test-demo-data/temp --numWorkers=2 --maxNumWorkers=3 --runner=DataflowRunner --filePattern=gs://dlp-dataflow-deid-test-demo-data/*.csv --dataset=demo_dataset  --inspectTemplateName=projects/dlp-dataflow-deid-test/locations/global/inspectTemplates/dlp-demo-inspect-latest-1686302920427 --deidentifyTemplateName=projects/dlp-dataflow-deid-test/locations/global/deidentifyTemplates/dlp-demo-deid-latest-1686302920427 --DLPMethod=DEID"
+      - run: gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" --region=us-central1 --project=muskan-dlp-test-local3 --streaming --enableStreamingEngine --tempLocation=gs://muskan-dlp-test-local3-demo-data/temp --numWorkers=2 --maxNumWorkers=3 --runner=DataflowRunner --filePattern=gs://muskan-dlp-test-local3-demo-data/*.csv --dataset=demo_dataset  --inspectTemplateName=projects/muskan-dlp-test-local3/locations/global/inspectTemplates/dlp-demo-inspect-latest-1680688062701 --deidentifyTemplateName=projects/muskan-dlp-test-local3/locations/global/deidentifyTemplates/dlp-demo-deid-latest-1680688062701 --DLPMethod=DEID"
+      

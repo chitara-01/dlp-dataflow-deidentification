@@ -29,24 +29,37 @@ jobs:
       
       - run: gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" --region=us-central1 --project=muskan-dlp-test-local3 --streaming --enableStreamingEngine --tempLocation=gs://muskan-dlp-test-local3-demo-data/temp --numWorkers=2 --maxNumWorkers=3 --runner=DataflowRunner --filePattern=gs://muskan-dlp-test-local3-demo-data/*.csv --dataset=gh_test_2  --inspectTemplateName=projects/muskan-dlp-test-local3/locations/global/inspectTemplates/dlp-demo-inspect-latest-1680688062701 --deidentifyTemplateName=projects/muskan-dlp-test-local3/locations/global/deidentifyTemplates/dlp-demo-deid-latest-1680688062701 --batchSize=200000 --DLPMethod=DEID"
       
+  bq:
+    runs-on: 
+      - self-hosted
+      - gh-test-2
+
+    steps:
       - name: Query BQ
         run: bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`'
       
       - name: Store results in variable
-        run: export RESULT=$(bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`')
+        run: export TABLE_COUNT=$(bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2`')
       
       - name: Print RESULT
-        run: echo $(RESULT)
+        run: echo $(TABLE_COUNT)
+        
+      - name: conditional
+        run: |
+          if [[ "$TABLE_COUNT" == "5" ]]; then
+            export ROW_COUNT=$(bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`')
+            echo $(ROW_COUNT)
+          fi
       
-      - name: Sleep for 5 minutes
-        run: sleep 5m
-        shell: bash
+#       - name: Sleep for 5 minutes
+#         run: sleep 5m
+#         shell: bash
       
-      - name: Query BQ
-        run: bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`'
+#       - name: Query BQ
+#         run: bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`'
       
-      - name: Store results in variable
-        run: export RESULT=$(bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`')
+#       - name: Store results in variable
+#         run: export RESULT=$(bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`')
       
-      - name: Print RESULT
-        run: echo $(RESULT)
+#       - name: Print RESULT
+#         run: echo $(RESULT)

@@ -46,7 +46,9 @@ jobs:
         run: bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__'
       
       - name: Store results in variable
-        run: export TABLE_COUNT=$(bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__')
+        run: |
+          export TABLE_COUNT=$(bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__')
+          echo "The number of tables is $TABLE_COUNT"
           
       - name: Print RESULT
         run: echo "The number of tables is $TABLE_COUNT"

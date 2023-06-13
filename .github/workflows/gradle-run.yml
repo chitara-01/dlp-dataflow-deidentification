@@ -50,7 +50,7 @@ jobs:
         
       - name: Print RESULT
         env:
-          TABLE_COUNT: ${{bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2`'}}
+          TABLE_COUNT: ${{ bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2`' }}
         run: echo "The number of tables is $TABLE_COUNT"
         
       - name: conditional

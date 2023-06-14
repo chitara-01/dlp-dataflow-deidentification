@@ -5,8 +5,6 @@ on:
     branches:
       - ci_workflow
 
-permissions: write-all
-
 jobs:
 #   build:
 #     runs-on: 
@@ -36,29 +34,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
+      
+#       - name: sleep
+#         run: sleep 5m
 
       - name: Query BQ
-        run: bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__'
+        run: bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__' --format csv | wc -l
       
-      - name: Install BQ library
-        run: |
-          bq_library=$(which bq)
-          if [[ -z $bq_library ]]; then
-            echo "Error: Could not find the bq command-line tool."
-            exit 1
-          fi
-          tables=$(bq ls)
-          for table in $tables; do
-            rows=$(bq show --format=tablerows $table | wc -l)
-            if [[ $rows -eq 0 ]]; then
-              echo "Table $table is empty."
-            fi
-          done
+#       - name: Install BQ library
+#         run: |
+#           bq_library=$(which bq)
+#           if [[ -z $bq_library ]]; then
+#             echo "Error: Could not find the bq command-line tool."
+#             exit 1
+#           fi
+#           tables=$(bq ls)
+#           for table in $tables; do
+#             rows=$(bq show --format=tablerows $table | wc -l)
+#             if [[ $rows -eq 0 ]]; then
+#               echo "Table $table is empty."
+#             fi
+#           done
           
 #       - name: Print RESULT
 #         run: echo "The number of tables is $TABLE_COUNT"

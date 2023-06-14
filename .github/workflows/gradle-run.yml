@@ -45,6 +45,11 @@ jobs:
           if [[ "$table_count" == 5 ]]; then
             echo "DONE"
           fi
+          export row_count=$(bq query --use_legacy_sql=false --format json 'SELECT table_id, row_count FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__')
+          row_count_json=$(echo "$row_count" | jq -r '.[].table_id')
+          for key in $row_count_json; do 
+            echo $key; 
+          done
       
 #       - name: Loop over BQ
 #         run: |

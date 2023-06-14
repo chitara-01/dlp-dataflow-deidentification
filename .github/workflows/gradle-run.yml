@@ -45,6 +45,22 @@ jobs:
           if [[ "$table_count" == 5 ]]; then
             echo "DONE"
           fi
+      
+#       - name: Loop over BQ
+#         run: |
+#           for i in $(seq 0 30); do
+#             if [ $((i % 5)) -eq 0 ]; then
+#               for table_id in $table_ids; then
+#                 export row_count=$(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `muskan-dlp-test-local3.gh_test_2`.$table_id'  | wc -l ) -1))
+#                 if [[ "$row_count" == 99999 ]]; then
+#                   echo "Correct"
+#                 else
+#                   echo "Incorrect"
+#                 fi
+#               done
+#               sleep 300
+#             fi
+#           done
         
 #       - name: Install BQ library
 #         run: |

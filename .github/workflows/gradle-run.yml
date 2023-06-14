@@ -40,7 +40,7 @@ jobs:
 
       - name: Query BQ
         run: |
-          table_count = $(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__'  | wc -l ) -1))
+          export table_count=$(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__'  | wc -l ) -1))
           echo "The number of tables in gh_test_2 are $table_count ."
           if [[ "$table_count" == 5 ]]; then
             echo "DONE"

@@ -40,16 +40,20 @@ jobs:
 
       - name: Query BQ
         run: |
+          curr_time=0
           export table_count=$(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__'  | wc -l ) -1))
           echo "The number of tables in gh_test_2 are $table_count ."
-          if [[ "$table_count" == 5 ]]; then
-            echo "DONE"
-          fi
+          while [[ "$table_count" != 5 ]]; do
+            sleep 5m
+            echo "Sleep for 5 mins as there are $table_count tables only."
+          done
+          echo "table_count is $table_count now."
           export row_count=$(bq query --use_legacy_sql=false --format json 'SELECT table_id, row_count FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__')
           row_count_json=$(echo "$row_count" | jq -r '.[].table_id')
           for key in $row_count_json; do 
             echo $key; 
           done
+          echo $row_count_json
       
 #       - name: Loop over BQ
 #         run: |

@@ -47,13 +47,15 @@ jobs:
             table_count=$(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__'  | wc -l ) -1))
           done
           echo "Verified number of tables in BQ: $table_count ."
-          row_count1=$(bq query --use_legacy_sql=false --format json 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`')
-          row_count=$(echo "$row_count1" | jq -r '.[].f0_')
-          if [[ $row_count != "99999" ]]; then 
-            echo "FAILED"; 
-          else 
-            echo "PASSED"; 
-          fi
+          rows_verified=false
+          while !rows_verified; do
+            row_count1=$(bq query --use_legacy_sql=false --format json 'SELECT DISTINCT(COUNT(*)) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`')
+            row_count=$(echo "$row_count1" | jq -r '.[].f0_')
+            if [[ $row_count == "99999" ]]; then 
+              echo "PASSED"; 
+              rows_verified=true;
+            fi
+          done
 
       
 #       - name: Loop over BQ

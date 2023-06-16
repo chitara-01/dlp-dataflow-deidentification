@@ -6,7 +6,7 @@ on:
       - ci_workflow
 
 jobs:
-  build:
+  run-and-verify:
     runs-on: 
       - self-hosted
       - gh-test-2
@@ -27,17 +27,10 @@ jobs:
       - name: Get Project ID
         run: echo $(gcloud config get-value project)
       
-      - run: gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" --region=us-central1 --project=muskan-dlp-test-local3 --streaming --enableStreamingEngine --tempLocation=gs://muskan-dlp-test-local3-demo-data/temp --numWorkers=2 --maxNumWorkers=3 --runner=DataflowRunner --filePattern=gs://muskan-dlp-test-local3-demo-data/*.csv --dataset=gh_test_2  --inspectTemplateName=projects/muskan-dlp-test-local3/locations/global/inspectTemplates/dlp-demo-inspect-latest-1680688062701 --deidentifyTemplateName=projects/muskan-dlp-test-local3/locations/global/deidentifyTemplates/dlp-demo-deid-latest-1680688062701 --batchSize=200000 --DLPMethod=DEID"
+#       - name: Run DLP Pipeline
+#         run: gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" --region=us-central1 --project=muskan-dlp-test-local3 --streaming --enableStreamingEngine --tempLocation=gs://muskan-dlp-test-local3-demo-data/temp --numWorkers=2 --maxNumWorkers=3 --runner=DataflowRunner --filePattern=gs://muskan-dlp-test-local3-demo-data/*.csv --dataset=gh_test_2  --inspectTemplateName=projects/muskan-dlp-test-local3/locations/global/inspectTemplates/dlp-demo-inspect-latest-1680688062701 --deidentifyTemplateName=projects/muskan-dlp-test-local3/locations/global/deidentifyTemplates/dlp-demo-deid-latest-1680688062701 --batchSize=200000 --DLPMethod=DEID"
       
-  bq:
-    runs-on: 
-      - self-hosted
-      - gh-test-2
-
-    steps:
-      - uses: actions/checkout@v2
-      
-      - name: Query BQ
+      - name: Verify BQ tables
         run: |
           tables_verified=false
           while !tables_verified; do
@@ -50,6 +43,9 @@ jobs:
             fi
           done
           echo "Verified number of tables in BQ: $table_count ."
+      
+      - name: Verify distinct rows
+        run: |
           rows_verified=false
           while !rows_verified; do
             row_count1=$(bq query --use_legacy_sql=false --format json 'SELECT COUNT(DISTINCT(ID)) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`')
@@ -61,60 +57,3 @@ jobs:
               sleep 5m
             fi
           done
-
-      
-#       - name: Loop over BQ
-#         run: |
-#           for i in $(seq 0 30); do
-#             if [ $((i % 5)) -eq 0 ]; then
-#               for table_id in $table_ids; then
-#                 export row_count=$(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `muskan-dlp-test-local3.gh_test_2`.$table_id'  | wc -l ) -1))
-#                 if [[ "$row_count" == 99999 ]]; then
-#                   echo "Correct"
-#                 else
-#                   echo "Incorrect"
-#                 fi
-#               done
-#               sleep 300
-#             fi
-#           done
-        
-#       - name: Install BQ library
-#         run: |
-#           bq_library=$(which bq)
-#           if [[ -z $bq_library ]]; then
-#             echo "Error: Could not find the bq command-line tool."
-#             exit 1
-#           fi
-#           tables=$(bq ls)
-#           for table in $tables; do
-#             rows=$(bq show --format=tablerows $table | wc -l)
-#             if [[ $rows -eq 0 ]]; then
-#               echo "Table $table is empty."
-#             fi
-#           done
-          
-#       - name: Print RESULT
-#         run: echo "The number of tables is $TABLE_COUNT"
-        
-#       - name: conditional
-#         run: |
-#           if [[ "$TABLE_COUNT" == "5" ]]; then
-#             echo "row_count=$(bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`')"
-#             echo "The number of rows in CCRecords_1564602825 result is $row_count"
-#           else
-#             echo "RETRY"
-#           fi
-      
-#       - name: Sleep for 5 minutes
-#         run: sleep 5m
-#         shell: bash
-      
-#       - name: Query BQ
-#         run: bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`'
-      
-#       - name: Store results in variable
-#         run: export RESULT=$(bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`')
-      
-#       - name: Print RESULT
-#         run: echo $(RESULT)

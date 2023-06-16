@@ -39,21 +39,26 @@ jobs:
       
       - name: Query BQ
         run: |
-          table_count=$(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__'  | wc -l ) -1))
-          echo "The number of tables in gh_test_2 are $table_count ."
-          while [[ "$table_count" != 5 ]]; do
-            sleep 5m
-            echo "Sleep for 5 mins as there are $table_count tables only."
+          tables_verified=false
+          while !tables_verified; do
             table_count=$(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__'  | wc -l ) -1))
+            if [[ $table_count == 5 ]]; then 
+              echo "PASSED"; 
+              tables_verified=true;
+            else
+              sleep 5m
+            fi
           done
           echo "Verified number of tables in BQ: $table_count ."
           rows_verified=false
           while !rows_verified; do
-            row_count1=$(bq query --use_legacy_sql=false --format json 'SELECT DISTINCT(COUNT(*)) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`')
+            row_count1=$(bq query --use_legacy_sql=false --format json 'SELECT COUNT(DISTINCT(ID)) FROM `muskan-dlp-test-local3.gh_test_2.CCRecords_1564602825`')
             row_count=$(echo "$row_count1" | jq -r '.[].f0_')
             if [[ $row_count == "99999" ]]; then 
               echo "PASSED"; 
               rows_verified=true;
+            else
+              sleep 5m
             fi
           done
 

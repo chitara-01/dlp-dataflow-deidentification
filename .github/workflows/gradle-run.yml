@@ -54,7 +54,7 @@ jobs:
             row_count=$(echo "$row_count1" | jq -r '.[].f0_')
             if [[ "$row_count" == "99999" ]]; then 
               echo "PASSED"; 
-              not_verified=true;
+              not_verified=false;
             else
               sleep 5m
             fi

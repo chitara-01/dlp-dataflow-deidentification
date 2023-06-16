@@ -6,26 +6,26 @@ on:
       - ci_workflow
 
 jobs:
-  build:
-    runs-on: 
-      - self-hosted
-      - gh-test-2
+#   build:
+#     runs-on: 
+#       - self-hosted
+#       - gh-test-2
 
-    steps:
-      - uses: actions/checkout@v2
+#     steps:
+#       - uses: actions/checkout@v2
 
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
+#       - name: Setup Java
+#         uses: actions/setup-java@v1
+#         with:
+#           java-version: 11
       
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+#       - name: Setup Gradle
+#         uses: gradle/gradle-build-action@v2
       
-      - name: Get Project ID
-        run: echo $(gcloud config get-value project)
+#       - name: Get Project ID
+#         run: echo $(gcloud config get-value project)
       
-      - run: gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" --region=us-central1 --project=muskan-dlp-test-local3 --streaming --enableStreamingEngine --tempLocation=gs://muskan-dlp-test-local3-demo-data/temp --numWorkers=2 --maxNumWorkers=3 --runner=DataflowRunner --filePattern=gs://muskan-dlp-test-local3-demo-data/*.csv --dataset=gh_test_2  --inspectTemplateName=projects/muskan-dlp-test-local3/locations/global/inspectTemplates/dlp-demo-inspect-latest-1680688062701 --deidentifyTemplateName=projects/muskan-dlp-test-local3/locations/global/deidentifyTemplates/dlp-demo-deid-latest-1680688062701 --batchSize=200000 --DLPMethod=DEID"
+#       - run: gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" --region=us-central1 --project=muskan-dlp-test-local3 --streaming --enableStreamingEngine --tempLocation=gs://muskan-dlp-test-local3-demo-data/temp --numWorkers=2 --maxNumWorkers=3 --runner=DataflowRunner --filePattern=gs://muskan-dlp-test-local3-demo-data/*.csv --dataset=gh_test_2  --inspectTemplateName=projects/muskan-dlp-test-local3/locations/global/inspectTemplates/dlp-demo-inspect-latest-1680688062701 --deidentifyTemplateName=projects/muskan-dlp-test-local3/locations/global/deidentifyTemplates/dlp-demo-deid-latest-1680688062701 --batchSize=200000 --DLPMethod=DEID"
       
   bq:
     runs-on: 
@@ -43,6 +43,7 @@ jobs:
           while [[ "$table_count" != 5 ]]; do
             sleep 5m
             echo "Sleep for 5 mins as there are $table_count tables only."
+            export table_count=$(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__'  | wc -l ) -1))
           done
           echo "table_count is $table_count now."
           export row_count=$(bq query --use_legacy_sql=false --format json 'SELECT table_id, row_count FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__')

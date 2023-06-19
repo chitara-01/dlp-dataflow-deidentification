@@ -34,7 +34,7 @@ jobs:
           table_count=0
           while $not_verified; do
             table_count=$(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `muskan-dlp-test-local3.gh_test_2`.__TABLES__'  | wc -l ) -1))
-            if [[ "$table_count" == "5" ]]; then
+            if [[ "$table_count" == "$table_count_orig" ]]; then
               echo "PASSED"; 
               not_verified=false;
             else

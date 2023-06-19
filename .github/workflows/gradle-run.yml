@@ -48,8 +48,8 @@ jobs:
                 --runner=DataflowRunner /
                 --filePattern=gs://${{env.GCS_BUCKET}}/*.csv /
                 --dataset=gh_test_2  /
-                --inspectTemplateName=${{INSPECT_TEMPLATE_PATH}} /
-                --deidentifyTemplateName=${{DEID_TEMPLATE_PATH}} /
+                --inspectTemplateName=${{env.INSPECT_TEMPLATE_PATH}} /
+                --deidentifyTemplateName=${{env.DEID_TEMPLATE_PATH}} /
                 --batchSize=200000 /
                 --DLPMethod=DEID"
       

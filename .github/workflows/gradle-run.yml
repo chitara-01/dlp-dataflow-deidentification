@@ -37,20 +37,20 @@ jobs:
         uses: gradle/gradle-build-action@v2
       
       - name: Run DLP Pipeline
-        run: gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" /
-                --region=us-central1 /
-                --project=${{env.PROJECT_ID}} /
-                --streaming /
-                --enableStreamingEngine /
-                --tempLocation=gs://${{env.GCS_BUCKET}}/temp /
-                --numWorkers=2 /
-                --maxNumWorkers=3 /
-                --runner=DataflowRunner /
-                --filePattern=gs://${{env.GCS_BUCKET}}/*.csv /
-                --dataset=gh_test_2  /
-                --inspectTemplateName=${{env.INSPECT_TEMPLATE_PATH}} /
-                --deidentifyTemplateName=${{env.DEID_TEMPLATE_PATH}} /
-                --batchSize=200000 /
+        run: gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" \
+                --region=us-central1 \
+                --project=${{env.PROJECT_ID}} \
+                --streaming \
+                --enableStreamingEngine \
+                --tempLocation=gs://${{env.GCS_BUCKET}}/temp \
+                --numWorkers=2 \
+                --maxNumWorkers=3 \
+                --runner=DataflowRunner \
+                --filePattern=gs://${{env.GCS_BUCKET}}/*.csv \
+                --dataset=gh_test_2 \
+                --inspectTemplateName=${{env.INSPECT_TEMPLATE_PATH}} \
+                --deidentifyTemplateName=${{env.DEID_TEMPLATE_PATH}} \
+                --batchSize=200000 \
                 --DLPMethod=DEID"
       
       - name: Verify BQ tables

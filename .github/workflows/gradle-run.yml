@@ -37,7 +37,8 @@ jobs:
         uses: gradle/gradle-build-action@v2
       
       - name: Run DLP Pipeline
-        run: gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" \
+        run: |
+          gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" \
                 --region=us-central1 \
                 --project=${{env.PROJECT_ID}} \
                 --streaming \

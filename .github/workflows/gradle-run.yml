@@ -48,7 +48,7 @@ jobs:
                 --maxNumWorkers=3 \
                 --runner=DataflowRunner \
                 --filePattern=gs://${{env.GCS_BUCKET}}/*.csv \
-                --dataset=gh_test_2 \
+                --dataset=${{env.DATASET_ID}} \
                 --inspectTemplateName=${{env.INSPECT_TEMPLATE_PATH}} \
                 --deidentifyTemplateName=${{env.DEID_TEMPLATE_PATH}} \
                 --batchSize=200000 \

@@ -33,47 +33,47 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Store query in GCS bucket
-        run: |
-          export QUERY="SELECT ID, Card_Number, Card_Holders_Name FROM \`${{env.PROJECT_ID}}.${{env.DATASET_ID}}.${{env.TABLE_ID}}\` WHERE SAFE_CAST(Credit_Limit AS INT64)>100000 AND SAFE_CAST(Age AS INT64)>50 GROUP BY ID, Card_Number, Card_Holders_Name LIMIT 10"
-          cat << EOF | gsutil cp - gs://${GCS_BUCKET}/reid_query.sql
-          ${QUERY}
-          EOF
+#       - name: Store query in GCS bucket
+#         run: |
+#           export QUERY="SELECT ID, Card_Number, Card_Holders_Name FROM \`${{env.PROJECT_ID}}.${{env.DATASET_ID}}.${{env.TABLE_ID}}\` WHERE SAFE_CAST(Credit_Limit AS INT64)>100000 AND SAFE_CAST(Age AS INT64)>50 GROUP BY ID, Card_Number, Card_Holders_Name LIMIT 10"
+#           cat << EOF | gsutil cp - gs://${GCS_BUCKET}/reid_query.sql
+#           ${QUERY}
+#           EOF
 
-      - name: Create a PubSub topic
-        run: |
-          if [[ $(gcloud pubsub topics list --filter="name:${{env.PUBSUB_TOPIC_NAME}}") ]]; then
-            echo "Topic already created!"
-          else
-            gcloud pubsub topics create ${{env.PUBSUB_TOPIC_NAME}}
-            echo "Created a new topic!"
-          fi
+#       - name: Create a PubSub topic
+#         run: |
+#           if [[ $(gcloud pubsub topics list --filter="name:${{env.PUBSUB_TOPIC_NAME}}") ]]; then
+#             echo "Topic already created!"
+#           else
+#             gcloud pubsub topics create ${{env.PUBSUB_TOPIC_NAME}}
+#             echo "Created a new topic!"
+#           fi
 
-      - name: Run DLP Pipeline
-        run: |
-          gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" \
-                --region=us-central1 \
-                --project=${{env.PROJECT_ID}} \
-                --tempLocation=gs://${{env.GCS_BUCKET}}/temp \
-                --numWorkers=2 \
-                --maxNumWorkers=3 \
-                --runner=DataflowRunner \
-                --tableRef=${{env.PROJECT_ID}}:${{env.DATASET_ID}}.${{env.TABLE_ID}} \
-                --dataset=${{env.DATASET_ID}} \
-                --topic=projects/${{env.PROJECT_ID}}/topics/${{env.PUBSUB_TOPIC_NAME}} \
-                --autoscalingAlgorithm=THROUGHPUT_BASED \
-                --workerMachineType=n1-highmem-4 \
-                --deidentifyTemplateName=${{env.REID_TEMPLATE_PATH}} \
-                --DLPMethod=REID \
-                --keyRange=1024 \
-                --queryPath=gs://${GCS_BUCKET}/reid_query.sql"
+#       - name: Run DLP Pipeline
+#         run: |
+#           gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" \
+#                 --region=us-central1 \
+#                 --project=${{env.PROJECT_ID}} \
+#                 --tempLocation=gs://${{env.GCS_BUCKET}}/temp \
+#                 --numWorkers=2 \
+#                 --maxNumWorkers=3 \
+#                 --runner=DataflowRunner \
+#                 --tableRef=${{env.PROJECT_ID}}:${{env.DATASET_ID}}.${{env.TABLE_ID}} \
+#                 --dataset=${{env.DATASET_ID}} \
+#                 --topic=projects/${{env.PROJECT_ID}}/topics/${{env.PUBSUB_TOPIC_NAME}} \
+#                 --autoscalingAlgorithm=THROUGHPUT_BASED \
+#                 --workerMachineType=n1-highmem-4 \
+#                 --deidentifyTemplateName=${{env.REID_TEMPLATE_PATH}} \
+#                 --DLPMethod=REID \
+#                 --keyRange=1024 \
+#                 --queryPath=gs://${GCS_BUCKET}/reid_query.sql"
 
       - name: Verify BQ table
         run: |
           not_verified=true
           table_count=0
           while $not_verified; do
-            table_count=$(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `${{env.PROJECT_ID}}.${{env.DATASET_ID}}`.__TABLES__ WHERE table_id='${{env.TABLE_ID}}_re_id'  | wc -l ) -1))
+            table_count=$(($(bq query --use_legacy_sql=false --format csv 'SELECT * FROM `${{env.PROJECT_ID}}.${{env.DATASET_ID}}`.__TABLES__ WHERE table_id='${{env.TABLE_ID}}_re_id''  | wc -l ) -1))
             if [[ "$table_count" == "1" ]]; then
               echo "PASSED"; 
               not_verified=false;

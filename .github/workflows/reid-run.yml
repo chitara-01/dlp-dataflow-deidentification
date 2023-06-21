@@ -89,7 +89,8 @@ jobs:
           not_verified=true
           row_count=0
           while $not_verified; do
-            row_count=$(bq query --use_legacy_sql=false --format json 'SELECT COUNT(ID) FROM `${{env.PROJECT_ID}}.${{env.DATASET_ID}}.${{env.TABLE_ID}}_re_id`')
+            row_count_json=$(bq query --use_legacy_sql=false --format json 'SELECT COUNT(ID) FROM `${{env.PROJECT_ID}}.${{env.DATASET_ID}}.${{env.TABLE_ID}}_re_id`')
+            row_count=$(echo "$row_count_json" | jq -r '.[].f0_')
             if [[ "$row_count" == "$rc_orig" ]]; then 
               echo "PASSED"; 
               not_verified=false;

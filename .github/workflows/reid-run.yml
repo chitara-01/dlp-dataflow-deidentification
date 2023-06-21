@@ -62,7 +62,6 @@ jobs:
                 --dataset=${{env.DATASET_ID}} \
                 --topic=projects/${{env.PROJECT_ID}}/topics/${{env.PUBSUB_TOPIC_NAME}} \
                 --autoscalingAlgorithm=THROUGHPUT_BASED \
-#          test if highmem MT is required
                 --workerMachineType=n1-highmem-4 \
                 --deidentifyTemplateName=${{env.REID_TEMPLATE_PATH}} \
                 --DLPMethod=REID \

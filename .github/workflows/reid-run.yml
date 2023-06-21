@@ -36,9 +36,7 @@ jobs:
       - name: Store query in GCS bucket
         run: |
           export QUERY="SELECT ID, Card_Number, Card_Holders_Name FROM \`${{env.PROJECT_ID}}.${{env.DATASET_ID}}.${{env.TABLE_ID}}\` WHERE SAFE_CAST(Credit_Limit AS INT64)>100000 AND SAFE_CAST(Age AS INT64)>50 GROUP BY ID, Card_Number, Card_Holders_Name LIMIT 10"
-          cat << EOF | gsutil cp - gs://${GCS_BUCKET}/reid_query.sql \
-          ${QUERY} \
-          EOF
+          cat ${QUERY} | gsutil cp - gs://${REID_QUERY_BUCKET}/reid_query.sql
 
       - name: Create a PubSub topic
         run: |

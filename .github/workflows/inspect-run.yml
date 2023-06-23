@@ -12,7 +12,7 @@ env:
   TABLE_ID: "CCRecords_1564602825"
   INSPECTION_TABLE_ID: "dlp_inspection_result"
   INSPECT_TEMPLATE_PATH: "projects/muskan-dlp-test-local3/locations/global/inspectTemplates/dlp-demo-inspect-latest-1680688062701"
-  NUM_INSPECTION_RECORDS: "294339"
+  NUM_INSPECTION_RECORDS: "1483065"
 
 jobs:
   inspect-and-verify:
@@ -20,7 +20,7 @@ jobs:
       - self-hosted
       - gh-test-2
 
-    timeout-minutes: 30
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@v2

@@ -9,7 +9,7 @@ env:
   PROJECT_ID: "muskan-dlp-test-local3"
   DATASET_ID: "gh_test_2"
   GCS_BUCKET: "muskan-dlp-test-local3-demo-data"
-  TABLE_ID: "CCRecords_1564602825"
+  FILE_NAME: "tiny_csv"
   INSPECTION_TABLE_ID: "dlp_inspection_result"
   INSPECT_TEMPLATE_PATH: "projects/muskan-dlp-test-local3/locations/global/inspectTemplates/dlp-demo-inspect-latest-1680688062701"
   NUM_INSPECTION_RECORDS: "1483065"
@@ -44,7 +44,7 @@ jobs:
                 --numWorkers=1 \
                 --maxNumWorkers=2 \
                 --runner=DataflowRunner \
-                --filePattern=gs://${{env.GCS_BUCKET}}/*.csv \
+                --filePattern=gs://${{env.GCS_BUCKET}}/${{env.FILE_NAME}}.csv \
                 --dataset=${{env.DATASET_ID}} \
                 --inspectTemplateName=${{env.INSPECT_TEMPLATE_PATH}} \
                 --batchSize=200000 \

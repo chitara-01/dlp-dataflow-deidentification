@@ -12,7 +12,7 @@ env:
   FILE_NAME: "tiny_csv"
   INSPECTION_TABLE_ID: "dlp_inspection_result"
   INSPECT_TEMPLATE_PATH: "projects/muskan-dlp-test-local3/locations/global/inspectTemplates/dlp-demo-inspect-latest-1680688062701"
-  NUM_INSPECTION_RECORDS: "1483065"
+  NUM_INSPECTION_RECORDS: "30"
 
 jobs:
   inspect-and-verify:

@@ -25,3 +25,23 @@ DEID_TEMPLATE_PATH="projects/muskan-dlp-test-local3/locations/global/deidentifyT
 
 
 echo $PROJECT_ID
+
+echo "Starting DLP DEID pipeline ..."
+
+gradle run -DmainClass=com.google.swarm.tokenization.DLPTextToBigQueryStreamingV2 -Pargs=" \
+  --region=us-central1 \
+  --project=${{env.PROJECT_ID}} \
+  --streaming \
+  --enableStreamingEngine \
+  --tempLocation=gs://${{env.GCS_BUCKET}}/temp \
+  --numWorkers=2 \
+  --maxNumWorkers=3 \
+  --runner=DataflowRunner \
+  --filePattern=gs://${{env.GCS_BUCKET}}/*.csv \
+  --dataset=${{env.DATASET_ID}} \
+  --inspectTemplateName=${{env.INSPECT_TEMPLATE_PATH}} \
+  --deidentifyTemplateName=${{env.DEID_TEMPLATE_PATH}} \
+  --batchSize=200000 \
+  --DLPMethod=DEID"
+
+echo "Finished starting DLP DEID pipeline!"

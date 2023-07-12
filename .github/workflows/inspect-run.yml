@@ -3,7 +3,7 @@ name: INSPECT pipeline for CSV file format
 on:
   push:
     branches:
-      - ci_workflow
+      - ci-workflow-testing
 
 env:
   PROJECT_ID: "muskan-dlp-test-local3"

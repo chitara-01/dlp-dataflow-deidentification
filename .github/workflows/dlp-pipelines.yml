@@ -3,7 +3,7 @@ name: Java CI with Gradle
 on:
   push:
     branches:
-      - ci-workflow-testing 
+      - ci-workflow-testing
 
 env:
   PROJECT_ID: "dlp-dataflow-deid-ci-392604"
